@@ -1,10 +1,3 @@
-//
-//  List.h
-//  Lab2_Data_Structs
-//
-//  Created by Freddy Hernandez on 1/18/23.
-//
-
 #ifndef LISTTEMPLATE_H
 #define LISTTEMPLATE_H
 
@@ -22,44 +15,52 @@ using std::move;
 
 template<typename T>class List {
 private:
-    Node<T>* l_head;
-    Node<T>* l_tail;
-    int l_count;
+    
+    Node<T>* l_head; // pointer to the head of the list
+    Node<T>* l_tail; // pointer to the tail of the list
+    int l_count; // number of nodes in the list
     
 public:
-    List();
-    List(const T data);
-    List(const List& copy);
-    List(List&& move) noexcept;
-    ~List();
+    
+    List(); // default constructor
+    List(const T data); // parameterized constructor
+    List(const List& copy); // copy constructor
+    List(List&& move) noexcept; // move constructor
+    ~List(); // deconstructor
+    
+    
+    List& operator=(const List& copy); //copy assignment operator
+    List& operator=(List&& move) noexcept; //move assignment operator
+    explicit operator bool() const; // T if list is empty, otherwise F
+    
 
-    List& operator=(const List& copy);
-    List& operator=(List&& move) noexcept;
-    explicit operator bool() const;
-
-    void Append(const T data);
-    void Prepend(const T data);
-    void RemoveLast();
-    void RemoveFirst();
-    void Extract(const T data);
-    void InsertAfter(const T data, const T after);
-    void InsertBefore(const T data, const T before);
-    void Purge() noexcept;
-
-    T& Last();
-    T Last() const;
-    T& First();
-    T First() const;
-
-    Node<T>* getHead();
-    Node<T>* getTail();
-    bool isEmpty() const noexcept;
-    size_t Size() const noexcept;
-    bool operator==(const List<T>& rhs) const noexcept;
+    void Append(const T data); // put T data at the end of the list
+    void Prepend(const T data); // put T data at the end of the list
+    void RemoveLast(); // remove the last node of the list
+    void RemoveFirst(); // remove the first node of the list
+    void Extract(const T data); // remove the node that equals T data
+    void InsertAfter(const T data, const T after); //insert T data after T after
+    void InsertBefore(const T data, const T before); //insert T data before T before
+    void Purge() noexcept; // delete all of the nodes in the list
+    
+    
+    T& Last(); // return the address of the last element
+    T Last() const; // return the value of the last element
+    T& First(); // return the address of the first element
+    T First() const; // return the value of the value element
+    
+    Node<T>* getHead(); // return the pointer to the head of the list
+    Node<T>* getTail(); // return the pointer to the tail of the list
+    bool isEmpty() const noexcept; // T if list is empty, otherwise F
+    size_t Size() const noexcept; // return the size of the list
+    bool operator==(const List<T>& rhs) const noexcept; // compare if 2 lists are equal
+    
 };
 
+
+
 template <typename T>
-List<T>::List() : l_head(nullptr), l_tail(nullptr), l_count(0) { }
+List<T>::List() : l_head(nullptr), l_tail(nullptr), l_count(0) {} // initializing everything null/0
 
 template <typename T>
 List<T>::List(const T data)
@@ -174,7 +175,7 @@ List<T>& List<T>::operator=(List&& move) noexcept
 template<typename T>
 List<T>::operator bool() const
 {
-    return l_head != nullptr;
+    return l_head != nullptr; //make sure to check if head is not null and return that
 }
 
 
@@ -252,81 +253,93 @@ void List<T>::RemoveFirst()
 template<typename T>
 void List<T>::Extract(const T data)
 {
-    if (l_head == nullptr)
-        return;
-
-    if (l_head->n_data == data)
-    {
-        Node<T>* temp = l_head;
-        l_head = l_head->next_ptr;
-        if (l_head == nullptr)
-            l_tail = nullptr;
-        delete temp;
-        l_count--;
+    if (isEmpty()) {
+        throw Exception("IS EMPTY");
         return;
     }
-
-    Node<T>* current = l_head;
-    while (current->next_ptr != nullptr && current -> next_ptr -> n_data != data)
-        current = current->next_ptr;
-
-    if (current->next_ptr == nullptr)
+    if (l_head->n_data == data) {
+        RemoveFirst();
         return;
-
-    Node<T>* temp = current->next_ptr;
-    current->next_ptr = current->next_ptr->next_ptr;
-    if (current->next_ptr == nullptr)
-        l_tail = current;
-    delete temp;
-    l_count--;
+    }
+    if (l_tail->n_data == data) {
+        RemoveLast();
+        return;
+    }
+    Node<T>* current_node = l_head->next_ptr;
+    Node<T>* previous_node = l_head;
+    while (current_node != nullptr) {
+        if (current_node->n_data == data) {
+            previous_node->next_ptr = current_node->next_ptr;
+            current_node->next_ptr = nullptr;
+            delete current_node;
+            l_count--;
+            return;
+        }
+        previous_node = current_node;
+        current_node = current_node->next_ptr;
+    }
+    throw Exception("Data not found in the list");
 }
 
 
+
 template<typename T>
-void List<T>::InsertAfter(const T data, const T after)
-{
-    if (l_head == nullptr)
-        return;
+void List<T>::InsertAfter(const T data, const T after) {
+    if (isEmpty()) {
+        
+        throw Exception("Cannot insert after an element in an empty list");
+    }
 
-    Node<T>* current = l_head;
-    while (current != nullptr && current->n_data != after)
-        current = current->next_ptr;
-
-    if (current == nullptr)
-        return;
-
-    Node<T>* newNode = new Node<T>(data);
-    newNode->next_ptr = current->next_ptr;
-    current->next_ptr = newNode;
-    if (current == l_tail)
-        l_tail = newNode;
-    l_count++;
+    Node<T>* current_node = l_head;
+    while (current_node != nullptr) {
+        if (current_node->n_data == after) {
+            
+            Node<T>* new_node = new Node<T>(data);
+            new_node->next_ptr = current_node->next_ptr;
+            current_node->next_ptr = new_node;
+            if (current_node == l_tail) {
+                l_tail = new_node;
+            }
+            l_count++;
+            return;
+        }
+        current_node = current_node->next_ptr;
+    }
+    
+    throw Exception("Cannot insert after an element that is not in the list");
 }
 
 template<typename T>
-void List<T>::InsertBefore(const T data, const T before)
-{
-    if (l_head == nullptr)
-        return;
+void List<T>::InsertBefore(const T data, const T before) {
+    if (isEmpty()) {
+        // If the list is empty, we cannot insert before any elements
+        throw Exception("Cannot insert before an element in an empty list");
+    }
 
-    if (l_head->n_data == before)
-    {
+    if (l_head->n_data == before) {
+        // If the element to insert before is the first element, use the Prepend method
         Prepend(data);
         return;
     }
 
-    Node<T>* current = l_head;
-    while (current->next_ptr != nullptr && current -> next_ptr -> n_data != before)
-        current = current->next_ptr;
-
-    if (current->next_ptr == nullptr)
-        return;
-
-    Node<T>* newNode = new Node<T>(data);
-    newNode->next_ptr = current->next_ptr;
-    current->next_ptr = newNode;
-    l_count++;
+    Node<T>* current_node = l_head->next_ptr;
+    Node<T>* previous_node = l_head;
+    while (current_node != nullptr) {
+        if (current_node->n_data == before) {
+            // We found the element to insert before
+            Node<T>* new_node = new Node<T>(data);
+            previous_node->next_ptr = new_node;
+            new_node->next_ptr = current_node;
+            l_count++;
+            return;
+        }
+        previous_node = current_node;
+        current_node = current_node->next_ptr;
+    }
+    // If we reach this point, we did not find the element to insert before
+    throw Exception("Cannot insert before an element that is not in the list");
 }
+
 
 template<typename T>
 void List<T>::Purge() noexcept
@@ -347,6 +360,9 @@ void List<T>::Purge() noexcept
 template<typename T>
 T& List<T>::Last()
 {
+    if(isEmpty()){ //check if empty
+        throw Exception("List is empty"); // if empty throw
+    }
     return l_tail->n_data;
 }
 
@@ -359,12 +375,16 @@ T List<T>::Last() const
 template<typename T>
 T& List<T>::First()
 {
+    if (isEmpty()) { // check if empty
+        throw Exception("List is empty."); //throw
+    }
     return l_head->n_data;
 }
 
 template<typename T>
 T List<T>::First() const
 {
+   
     return l_head->n_data;
 }
 
@@ -383,30 +403,37 @@ Node<T>* List<T>::getTail()
 template<typename T>
 bool List<T>::isEmpty() const noexcept
 {
-        return l_head == nullptr;
+    return l_head == nullptr && l_tail == nullptr ; // check if head, tial are nullptr -> dont hold anything
 }
+
 
 template<typename T>
 size_t List<T>::Size() const noexcept
 {
-    return l_count;
+    size_t l_count = 0;
+        Node<T>* current_node = l_head;
+        while (current_node) {
+            l_count++;
+            current_node = current_node->next_ptr;
+        }
+        return l_count;
 }
 
 
 template<typename T>
-bool List<T>::operator==(const List<T>& rhs) const noexcept {
-    if (Size() != rhs.Size()) {
+bool List<T>::operator==(const List<T>& rhs) const noexcept
+{
+    if (l_count != rhs.l_count) {
         return false;
     }
-
-    Node<T>* lhs_current = l_head;
-    Node<T>* rhs_current = rhs.l_head;
-    while (lhs_current != nullptr) {
-        if (lhs_current->data != rhs_current->data) {
+    Node<T>* current_node = l_head;
+    Node<T>* rhs_current_node = rhs.l_head;
+    while (current_node) {
+        if (current_node->data != rhs_current_node->data) {
             return false;
         }
-        lhs_current = lhs_current->next;
-        rhs_current = rhs_current->next;
+        current_node = current_node->next;
+        rhs_current_node = rhs_current_node->next;
     }
     return true;
 }
