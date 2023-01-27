@@ -136,6 +136,5 @@ void Node<T>::Previous(Node<T>* const previous) noexcept {
 
 
 
-
 #endif //NODE_TEMPLATE_H
 
