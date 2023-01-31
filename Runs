@@ -1,0 +1,52 @@
+Default ctor test passed
+Param ctor test passed
+Param ctor test passed
+Copy ctor test passed
+Move ctor test passed
+Op equals test passed
+Move op equals test passed
+isEmpty test passed
+First with value test passed
+First with empty list test passed
+Last with value test passed
+Last with empty list test passed
+Prepend test passed
+Append test passed
+Purge test passed
+Extract empty list test passed
+Extract match test passed
+Extract no match test passed
+Insert after empty list test passed
+Insert after match test passed
+Insert after no match test passed
+Insert before empty list test passed
+Insert before match test passed
+Insert before no match test passed
+Default ctor test complex passed
+Param ctor test complex passed
+Copy ctor test complex passed
+Move ctor test complex passed
+Op equals test complex passed
+Move op equals test complex passed
+isEmpty test complex passed
+First with value test complex passed
+First with empty list test complex passed
+Last with value test complex passed
+Last with empty list test complex passed
+Prepend test complex passed
+Append test complex passed
+Purge test complex passed
+Extract empty list test complex passed
+Extract match test complex passed
+Extract no match test complex passed
+Insert after empty list test complex passed
+Insert after match test complex passed
+Insert after no match test complex passed
+Insert before empty list test complex passed
+Insert before match test complex passed
+Insert before no match test complex passed
+
+All tests passed! Good job!
+sh: pause: command not found
+Exiting...
+Program ended with exit code: 0
